@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Para Leslie</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--plum:#2d1635;--wine:#7a2a52;--rose:#e06b8e;--cream:#fff1e6;--blush:#fbd9d3;--petal:#f6c1c0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden}
+body{background:linear-gradient(180deg,var(--plum) 0%,var(--wine) 55%,var(--rose) 100%);font-family:'Dancing Script','Brush Script MT',cursive;color:var(--wine);-webkit-tap-highlight-color:transparent}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:10}
+.stage{position:fixed;inset:0;display:grid;place-items:center;perspective:900px}
+
+/* sobre */
+.env{position:relative;width:min(84vw,340px);aspect-ratio:1.45;cursor:pointer;animation:fly 2.4s cubic-bezier(.2,.8,.25,1) both,bob 3.2s ease-in-out 2.4s infinite;transition:transform 1s ease,opacity 1s ease}
+.env>*{position:absolute}
+.back{inset:0;background:var(--cream);border-radius:8px;z-index:1;box-shadow:0 20px 40px rgba(0,0,0,.35)}
+.letter{left:8%;right:8%;bottom:8%;height:85%;background:#fffdf8;border-radius:4px;z-index:2;transition:transform 1s ease .6s;
+background-image:repeating-linear-gradient(#fffdf8 0 17px,#f3dfe0 17px 18px)}
+.front{inset:0;border-radius:8px;z-index:3;
+background:linear-gradient(to top right,transparent 49.5%,#f0bfb8 50%) left/50% 100% no-repeat,
+linear-gradient(to top left,transparent 49.5%,#f0bfb8 50%) right/50% 100% no-repeat,var(--blush);
+clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%)}
+.to{left:0;right:0;bottom:7%;text-align:center;z-index:4;line-height:1;pointer-events:none;transition:opacity .4s}
+.to b{display:block;font:400 clamp(34px,11vw,46px) 'Great Vibes','Brush Script MT',cursive;color:var(--wine)}
+.to i{display:block;font:700 clamp(18px,5.6vw,24px) 'Dancing Script',cursive;font-style:normal;color:var(--rose);margin-top:2px}
+.flap{left:0;right:0;top:0;height:58%;z-index:5;background:var(--petal);transform-origin:top;border-radius:8px 8px 0 0;
+clip-path:polygon(0 0,100% 0,50% 100%);transition:transform .7s ease}
+.seal{left:50%;top:46%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:#c2264f;z-index:6;display:grid;place-items:center;color:#fff;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,.35);transition:opacity .3s}
+.hint{left:0;right:0;top:calc(100% + 22px);text-align:center;font:700 20px 'Dancing Script',cursive;color:#ffe3ec;animation:pulse 1.8s ease-in-out infinite}
+.wing{top:18%;width:38%;height:46%;background:radial-gradient(ellipse at 100% 60%,#fff 0%,#ffe9f1 55%,transparent 72%);z-index:0;opacity:.95;transition:opacity .4s}
+.wing.l{left:-30%;transform-origin:100% 60%;animation:flapL .45s ease-in-out infinite alternate}
+.wing.r{right:-30%;transform:scaleX(-1);transform-origin:100% 60%;animation:flapR .45s ease-in-out infinite alternate}
+.env.open .flap{transform:rotateX(180deg);z-index:1}
+.env.open .seal,.env.open .to,.env.open .hint,.env.open .wing{opacity:0}
+.env.open .letter{transform:translateY(-62%)}
+.env.gone{transform:translateY(45vh) scale(.7);opacity:0;pointer-events:none;animation:none}
+
+/* carta */
+.card{position:fixed;left:50%;top:50%;z-index:6;width:min(88vw,360px);padding:22px 24px 30px;text-align:center;border-radius:20px;
+background:linear-gradient(180deg,#fffdf8,#ffeef0);box-shadow:0 24px 60px rgba(20,0,20,.5),0 0 0 6px rgba(255,255,255,.12);
+transform:translate(-50%,-46%) scale(.7);opacity:0;pointer-events:none;transition:transform 1s cubic-bezier(.2,.9,.3,1.2),opacity .8s}
+.card::before{content:'';position:absolute;inset:9px;border:1.5px solid #f3c3cf;border-radius:14px;pointer-events:none}
+.card.show{transform:translate(-50%,-50%) scale(1);opacity:1}
+.bouq{width:min(38vw,140px);height:auto;display:block;margin:0 auto 4px;filter:drop-shadow(0 6px 8px rgba(122,42,82,.25));transform-origin:50% 100%;animation:sway 3.5s ease-in-out infinite}
+.card p{line-height:1.25;font-size:clamp(19px,5.4vw,23px);font-weight:500;margin-top:6px;position:relative}
+.card .t1{font:400 clamp(30px,9vw,38px)/1.1 'Great Vibes','Brush Script MT',cursive;color:var(--rose)}
+.card .t2{font-weight:700;color:var(--wine)}
+.card .t4{color:var(--rose);font-weight:700;margin-top:10px}
+.card .t5{font:400 clamp(28px,8.5vw,34px)/1.1 'Great Vibes','Brush Script MT',cursive;color:var(--wine);margin-top:12px}
+.h{opacity:0}
+@keyframes sway{50%{transform:rotate(2.5deg)}}
+
+@keyframes fly{0%{transform:translate(-120vw,-40vh) rotate(-35deg) scale(.5)}60%{transform:translate(8vw,6vh) rotate(8deg) scale(1.05)}100%{transform:none}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(2deg)}}
+@keyframes flapL{from{transform:rotate(18deg)}to{transform:rotate(-22deg)}}
+@keyframes flapR{from{transform:scaleX(-1) rotate(18deg)}to{transform:scaleX(-1) rotate(-22deg)}}
+@keyframes pulse{50%{opacity:.45}}
+@keyframes blink{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.env{animation:none}.wing{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="stage">
+  <div class="env" id="env" role="button" tabindex="0" aria-label="Abrir el sobre para Leslie">
+    <div class="wing l"></div><div class="wing r"></div>
+    <div class="back"></div>
+    <div class="letter"></div>
+    <div class="front"></div>
+    <div class="to"><b>Para Leslie</b><i>con cariño</i></div>
+    <div class="flap"></div>
+    <div class="seal">♥</div>
+    <div class="hint">Toca el sobre</div>
+  </div>
+</div>
+
+<div class="card" id="card">
+  <svg class="bouq" viewBox="0 0 200 210" role="img" aria-label="Ramo de peluches">
+<defs>
+<symbol id="bear" viewBox="0 0 60 60">
+<circle cx="13" cy="13" r="10" fill="var(--b)"/><circle cx="47" cy="13" r="10" fill="var(--b)"/>
+<circle cx="13" cy="13" r="5" fill="var(--i)"/><circle cx="47" cy="13" r="5" fill="var(--i)"/>
+<circle cx="30" cy="33" r="25" fill="var(--b)"/>
+<ellipse cx="30" cy="41" rx="12" ry="9" fill="var(--i)"/>
+<circle cx="21" cy="29" r="2.8" fill="#3b1f2a"/><circle cx="39" cy="29" r="2.8" fill="#3b1f2a"/>
+<circle cx="22" cy="28" r=".9" fill="#fff"/><circle cx="40" cy="28" r=".9" fill="#fff"/>
+<ellipse cx="30" cy="37" rx="3.6" ry="2.6" fill="#3b1f2a"/>
+<path d="M25.5 42q4.5 4 9 0" fill="none" stroke="#3b1f2a" stroke-width="1.6" stroke-linecap="round"/>
+<circle cx="13" cy="38" r="4" fill="#ff9ebb" opacity=".6"/><circle cx="47" cy="38" r="4" fill="#ff9ebb" opacity=".6"/>
+</symbol>
+<symbol id="fl" viewBox="-12 -12 24 24">
+<g fill="var(--f)"><circle cx="0" cy="-7" r="5.2"/><circle cx="6.7" cy="-2.2" r="5.2"/><circle cx="4.1" cy="5.7" r="5.2"/><circle cx="-4.1" cy="5.7" r="5.2"/><circle cx="-6.7" cy="-2.2" r="5.2"/></g>
+<circle r="3.6" fill="#ffd23f"/>
+</symbol>
+</defs>
+<g fill="#6fbf8b"><ellipse cx="30" cy="105" rx="9" ry="22" transform="rotate(-55 30 105)"/><ellipse cx="170" cy="105" rx="9" ry="22" transform="rotate(55 170 105)"/><ellipse cx="100" cy="24" rx="8" ry="16" fill="#58a977"/></g>
+<path d="M26 108Q62 96 100 106T174 108L114 206H86Z" fill="#ffb7cc"/>
+<path d="M100 106L114 206H86Z" fill="#ffd3e0" opacity=".7"/>
+<g fill="#fff" opacity=".85"><circle cx="70" cy="126" r="2.5"/><circle cx="130" cy="128" r="2.5"/><circle cx="78" cy="170" r="2.5"/><circle cx="122" cy="172" r="2.5"/></g>
+<use href="#fl" x="12" y="62" width="26" height="26" style="--f:#ffb3c8"/>
+<use href="#fl" x="162" y="62" width="26" height="26" style="--f:#e5c8ff"/>
+<use href="#fl" x="87" y="2" width="26" height="26" style="--f:#ffffff"/>
+<use href="#fl" x="44" y="28" width="22" height="22" style="--f:#ffb3c8"/>
+<use href="#fl" x="134" y="28" width="22" height="22" style="--f:#e5c8ff"/>
+<use href="#bear" x="24" y="64" width="58" height="58" style="--b:#ffa9c4;--i:#ffe1ea"/>
+<use href="#bear" x="118" y="64" width="58" height="58" style="--b:#f5e2cf;--i:#fff6ec"/>
+<use href="#bear" x="68" y="34" width="64" height="64" style="--b:#c98f6b;--i:#f2d3ba"/>
+<g transform="translate(100 148)"><path d="M0 0L-22 -11V11Z" fill="#c2264f"/><path d="M0 0L22 -11V11Z" fill="#c2264f"/><path d="M-3 4L-9 24M3 4L9 24" stroke="#c2264f" stroke-width="4" stroke-linecap="round"/><circle r="5" fill="#8f1a3a"/></g>
+</svg>
+  <p class="t1" id="l1"></p>
+  <p class="t2" id="l2"></p>
+  <p id="l3"></p>
+  <p class="t4" id="l4"></p>
+  <p class="t5" id="l5"></p>
+</div>
+
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let W,H,D=Math.min(window.devicePixelRatio||1,2);
+function size(){W=innerWidth;H=innerHeight;cv.width=W*D;cv.height=H*D;ctx.setTransform(D,0,0,D,0,0)}
+size();addEventListener('resize',size);
+
+const HEART=['#ff4d79','#ff7aa2','#e0245e','#ff9ebb','#c2264f'];
+const FLOWER=['#ffd1dc','#ffb3c8','#fff3b0','#e5c8ff','#ffffff','#ffc2a1'];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+let ps=[],raining=false,reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+function spawn(y){
+  const heart=Math.random()<.5;
+  ps.push({heart,x:Math.random()*W,y:y!==undefined?y:-30,s:heart?7+Math.random()*12:8+Math.random()*12,
+    vy:1+Math.random()*2.2,sw:Math.random()*Math.PI*2,sa:.4+Math.random()*1.2,r:Math.random()*6.28,vr:(Math.random()-.5)*.05,
+    c:heart?pick(HEART):pick(FLOWER),a:.75+Math.random()*.25});
+}
+function drawHeart(p){
+  const s=p.s;ctx.beginPath();ctx.moveTo(0,s*.35);
+  ctx.bezierCurveTo(-s*1.1,-s*.35,-s*.7,-s*1.2,0,-s*.55);
+  ctx.bezierCurveTo(s*.7,-s*1.2,s*1.1,-s*.35,0,s*.35);ctx.fill();
+}
+function drawFlower(p){
+  const s=p.s;
+  for(let i=0;i<5;i++){ctx.save();ctx.rotate(i*1.2566);ctx.beginPath();ctx.ellipse(0,-s*.55,s*.38,s*.6,0,0,6.283);ctx.fill();ctx.restore()}
+  ctx.fillStyle='#f5b50a';ctx.beginPath();ctx.arc(0,0,s*.28,0,6.283);ctx.fill();
+}
+function frame(){
+  ctx.clearRect(0,0,W,H);
+  if(raining&&ps.length<(reduce?50:150)&&Math.random()<(reduce?.25:.7))spawn();
+  for(let i=ps.length-1;i>=0;i--){
+    const p=ps[i];p.y+=p.vy;p.sw+=.03;p.x+=Math.sin(p.sw)*p.sa;p.r+=p.vr;
+    if(p.y>H+30){ps.splice(i,1);continue}
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.heart?Math.sin(p.sw)*.4:p.r);
+    ctx.globalAlpha=p.a;ctx.fillStyle=p.c;
+    p.heart?drawHeart(p):drawFlower(p);ctx.restore();
+  }
+  requestAnimationFrame(frame);
+}
+frame();
+
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const L=[['l1','Hoy 25 de noviembre',55],['l2','día de regalar peluches',45],['l3','Este ramito de peluche es para ti con mucho cariño,',38],['l4','para que cada vez que lo mires recuerdes lo especial que eres y lo bonito que le das a los días de quienes te quieren. 💗',40],['l5','Feliz día de peluches, Leslie 🧸',60]];
+L.forEach(([id,t])=>{document.getElementById(id).innerHTML='<span></span><span class="h">'+t+'</span>'});
+async function type(id,t,d){
+  const el=document.getElementById(id),a=el.firstChild,b=el.lastChild,ch=[...t];
+  for(let i=0;i<ch.length;i++){a.textContent+=ch[i];b.textContent=ch.slice(i+1).join('');await wait(d)}
+}
+
+let started=false;
+function startMusic(){
+  if(started)return;started=true;
+  const a=new Audio('Leslie.mp3');a.loop=true;a.volume=0;
+  a.play().then(()=>{let v=0;const f=setInterval(()=>{v=Math.min(v+.05,.9);a.volume=v;if(v>=.9)clearInterval(f)},200)}).catch(()=>{});
+}
+
+const env=document.getElementById('env'),card=document.getElementById('card');
+let opened=false;
+async function open(){
+  if(opened)return;opened=true;startMusic();
+  env.classList.add('open');
+  await wait(1900);
+  env.classList.add('gone');
+  card.classList.add('show');
+  raining=true;
+  for(let i=0;i<70;i++)spawn(-Math.random()*H);
+  await wait(900);
+  for(const [id,t,d] of L){await type(id,t,d);await wait(250)}
+}
+env.addEventListener('click',open);
+env.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}});
+</script>
+</body>
+</html>
